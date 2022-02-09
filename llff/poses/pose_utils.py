@@ -19,6 +19,7 @@ def load_colmap_data(realdir):
     print( 'Cameras', len(cam))
 
     h, w, f = cam.height, cam.width, cam.params[0]
+    print("camera focal lengths: ", cam.params.shape)
     # w, h, f = factor * w, factor * h, factor * f
     hwf = np.array([h,w,f]).reshape([3,1])
     
