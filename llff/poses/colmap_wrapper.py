@@ -29,7 +29,8 @@ def run_colmap(basedir, match_type):
         'colmap', 'feature_extractor', 
             '--database_path', os.path.join(basedir, 'database.db'), 
             '--image_path', os.path.join(basedir, 'images'),
-            '--ImageReader.single_camera', '1',
+            '--ImageReader.camera_model', 'SIMPLE_RADIAL',
+#             '--ImageReader.single_camera', '1',
             # '--SiftExtraction.use_gpu', '0',
     ]
     feat_output = ( subprocess.check_output(feature_extractor_args, universal_newlines=True) )
