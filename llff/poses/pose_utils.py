@@ -42,6 +42,7 @@ def load_colmap_data(realdir):
     c2w_mats = np.linalg.inv(w2c_mats)
     
     poses = c2w_mats[:, :3, :4].transpose([1,2,0])
+    print(poses.shape, np.tile(hwf[..., np.newaxis]).shape, np.concatenate([poses, np.tile(hwf[..., np.newaxis], [1,1,poses.shape[-1]])], 1).shape)
     poses = np.concatenate([poses, np.tile(hwf[..., np.newaxis], [1,1,poses.shape[-1]])], 1)
     
     points3dfile = os.path.join(realdir, 'sparse/0/points3D.bin')
