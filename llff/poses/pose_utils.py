@@ -85,7 +85,7 @@ def save_poses(basedir, poses, pts3d, perm):
         
         save_arr.append(np.concatenate([poses[..., i].ravel(), np.array([close_depth, inf_depth])], 0))
     save_arr = np.array(save_arr)
-    
+    print("Size of poses bounds before saving: ", save_arr.shape)
     np.save(os.path.join(basedir, 'poses_bounds.npy'), save_arr)
             
 
