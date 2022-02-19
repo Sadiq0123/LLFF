@@ -29,6 +29,7 @@ def load_colmap_data(realdir):
     w2c_mats = []
     bottom = np.array([0,0,0,1.]).reshape([1,4])
     
+    #This line has the list of iamges that are matched. Remove every other image and rerun colmap
     names = [imdata[k].name for k in imdata]
     print( 'Images #', len(names))
     perm = np.argsort(names)
