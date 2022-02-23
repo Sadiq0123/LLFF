@@ -19,7 +19,7 @@ def remove_unmatched_images(realdir):
     
     #this list contains the list of all images in the folder
     imgs_list = os.listdir(os.path.join(realdir, 'images'))
-    if len(imgs_list)=len(names):
+    if len(imgs_list)==len(names):
         print("All images matched. No need to rerun colmap")
         return False
     
