@@ -304,7 +304,7 @@ def resize_images(basedir):
         im = cv2.imread(os.path.join(basedir, 'images/'+img_name))
         diff_h = max_h - im.shape[0]
         diff_w = max_w - im.shape[1]
-        im = cv2.copyMakeBorder(im.copy(),int(diff_h/2),int((diff_h+1)/2),int(diff_w/2),int((diff_w+1)/2),cv2.BORDER_CONSTANT,value=WHITE)
+        im = cv2.copyMakeBorder(im.copy(),int(diff_h/2),int((diff_h+1)/2),int(diff_w/2),int((diff_w+1)/2),cv2.BORDER_CONSTANT)
         cv2.imwrite(os.path.join(basedir, 'images/'+img_name), im)
     return
 
