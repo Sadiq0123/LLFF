@@ -3,6 +3,7 @@ import os
 import sys
 import imageio
 import skimage.transform
+import shutil
 
 from llff.poses.colmap_wrapper import run_colmap
 import llff.poses.colmap_read_model as read_model
@@ -280,7 +281,8 @@ def load_data(basedir, factor=None, width=None, height=None, load_imgs=True):
 
 
 def reset_folder(basedir):
-    os.rmdir(os.path.join(basedir, 'sparse'))
+    #os.rmdir(os.path.join(basedir, 'sparse'))
+    shutil.rmtree(os.path.join(basedir, 'sparse'), ignore_errors=True)
     os.remove(os.path.join(basedir, 'database.db'))
     os.remove(os.path.join(basedir, 'colmap_output.txt'))
     return
