@@ -287,7 +287,26 @@ def reset_folder(basedir):
     os.remove(os.path.join(basedir, 'colmap_output.txt'))
     return
 
-
+def resize_images(basedir):
+    imgs_path = os.path.join(basedir, 'images')
+    img_names = os.listdir(imgs_path)
+    h, w = set(), set()
+    for img_name in img_names:
+        im = cv2.imread(os.path.join(basedir, 'images/'+img_name))
+        h.add(im.shape[0])
+        w.add(im.shape[1])
+    if len(h)==1 and len(w)==1:
+        print("All images of the same dimension")
+        return
+    max_h = max(h)
+    max_w = max(w)
+    for img_name in img_names:
+        im = cv2.imread(os.path.join(basedir, 'images/'+img_name))
+        diff_h = max_h - im.shape[0]
+        diff_w = max_w - im.shape[1]
+        im = cv2.copyMakeBorder(im.copy(),int(diff_h/2),int((diff_h+1)/2),int(diff_w/2),int((diff_w+1)/2),cv2.BORDER_CONSTANT,value=WHITE)
+        cv2.imwrite(os.path.join(basedir, 'images/'+img_name), im)
+    return
 
 
 def gen_poses(basedir, match_type, factors=None):
@@ -299,6 +318,7 @@ def gen_poses(basedir, match_type, factors=None):
         files_had = []
     if not all([f in files_had for f in files_needed]):
         print( 'Need to run COLMAP' )
+        resize_images(basedir)
         run_colmap(basedir, match_type)
     else:
         print('Don\'t need to run COLMAP')
