@@ -8,6 +8,29 @@ from llff.poses.colmap_wrapper import run_colmap
 import llff.poses.colmap_read_model as read_model
 
 
+def remove_unmatched_images(realdir):
+    
+    imagesfile = os.path.join(realdir, 'sparse/0/images.bin')
+    imdata = read_model.read_images_binary(imagesfile)
+    
+    #This line has the list of images that are matched. Remove every other image and rerun colmap
+    names = [imdata[k].name for k in imdata]
+    print( 'Images #', len(names))
+    
+    #this list contains the list of all images in the folder
+    imgs_list = os.listdir(os.path.join(realdir, 'images'))
+    if len(imgs_list)=len(names):
+        print("All images matched. No need to rerun colmap")
+        return False
+    
+    unmatched_imgs = list(set(imgs_list)-set(names))
+    for imgname in unmatched_imgs:
+        os.remove(os.path.join(realdir, 'images/'+imgname))
+    print( 'Removed unmatched images. Rerunning colmap' )
+    
+    return True
+
+
 def load_colmap_data(realdir):
     
     camerasfile = os.path.join(realdir, 'sparse/0/cameras.bin')
@@ -255,10 +278,16 @@ def load_data(basedir, factor=None, width=None, height=None, load_imgs=True):
     print('Loaded image data', imgs.shape, poses[:,-1,0])
     return poses, bds, imgs
 
-    
-            
-            
-    
+
+def reset_folder(basedir):
+    os.rmdir(os.path.join(basedir, 'sparse'))
+    os.remove(os.path.join(basedir, 'database.db'))
+    os.remove(os.path.join(basedir, 'colmap_output.txt'))
+    return
+
+
+
+
 def gen_poses(basedir, match_type, factors=None):
     
     files_needed = ['{}.bin'.format(f) for f in ['cameras', 'images', 'points3D']]
@@ -273,6 +302,26 @@ def gen_poses(basedir, match_type, factors=None):
         print('Don\'t need to run COLMAP')
         
     print( 'Post-colmap')
+    
+    
+    # -------------------------------------------------   Added section for unmatched images -----------------------------------------
+    rerun_colmap = remove_unmatched_images(basedir)
+    
+    if rerun_colmap:
+        reset_folder(basedir)     #Clears all files and folders except images
+        files_needed = ['{}.bin'.format(f) for f in ['cameras', 'images', 'points3D']]
+        if os.path.exists(os.path.join(basedir, 'sparse/0')):
+            files_had = os.listdir(os.path.join(basedir, 'sparse/0'))
+        else:
+            files_had = []
+        if not all([f in files_had for f in files_needed]):
+            print( 'Need to run COLMAP' )
+            run_colmap(basedir, match_type)
+        else:
+            print('Don\'t need to run COLMAP')
+        print( 'Post-colmap')
+    # -------------------------------------------------   Added section for unmatched images -----------------------------------------
+    
     
     poses, pts3d, perm = load_colmap_data(basedir)
     
