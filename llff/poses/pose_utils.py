@@ -4,6 +4,7 @@ import sys
 import imageio
 import skimage.transform
 import shutil
+import cv2
 
 from llff.poses.colmap_wrapper import run_colmap
 import llff.poses.colmap_read_model as read_model
