@@ -8,9 +8,9 @@ parser.add_argument('--match_type', type=str,
 					exhaustive_matcher sequential_matcher.  Other matchers not supported at this time')
 parser.add_argument('scenedir', type=str,
                     help='input scene directory')
-parser.add_argument('target_height', type=int, default=500
+parser.add_argument('target_height', type=int, default=700,
                     help='target resize height')
-parser.add_argument('target_width', type=int, default=500
+parser.add_argument('target_width', type=int, default=700,
                     help='target resize width')
 args = parser.parse_args()
 
