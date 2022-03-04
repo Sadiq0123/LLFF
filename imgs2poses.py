@@ -20,4 +20,4 @@ if args.match_type != 'exhaustive_matcher' and args.match_type != 'sequential_ma
 
 if __name__=='__main__':
 	target_dims = [args.target_height, args.target_width]
-	gen_poses(args.scenedir, target_dims, args.match_type)
+	gen_poses(args.scenedir, args.match_type, target_dims)
