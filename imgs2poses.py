@@ -8,6 +8,10 @@ parser.add_argument('--match_type', type=str,
 					exhaustive_matcher sequential_matcher.  Other matchers not supported at this time')
 parser.add_argument('scenedir', type=str,
                     help='input scene directory')
+parser.add_argument('target_height', type=int, default=500
+                    help='target resize height')
+parser.add_argument('target_width', type=int, default=500
+                    help='target resize width')
 args = parser.parse_args()
 
 if args.match_type != 'exhaustive_matcher' and args.match_type != 'sequential_matcher':
@@ -15,4 +19,5 @@ if args.match_type != 'exhaustive_matcher' and args.match_type != 'sequential_ma
 	sys.exit()
 
 if __name__=='__main__':
-    gen_poses(args.scenedir, args.match_type)
+	target_dims = [args.target_height, args.target_width]
+	gen_poses(args.scenedir, target_dims, args.match_type)
