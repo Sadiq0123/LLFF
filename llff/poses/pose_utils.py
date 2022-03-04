@@ -288,29 +288,36 @@ def reset_folder(basedir):
     os.remove(os.path.join(basedir, 'colmap_output.txt'))
     return
 
-def resize_images(basedir):
+def resize_images(basedir, img_shape):
     imgs_path = os.path.join(basedir, 'images')
     img_names = os.listdir(imgs_path)
+    target_h, target_w = img_shape[0], img_shape[1]
     h, w = set(), set()
     for img_name in img_names:
         im = cv2.imread(os.path.join(basedir, 'images/'+img_name))
         h.add(im.shape[0])
         w.add(im.shape[1])
-    if len(h)==1 and len(w)==1:
-        print("All images of the same dimension")
+        if(len(h)>1 or len(w)>1):
+            break
+    
+    if len(h)==1 and h[0]==target_h and len(w)==1 and w[0]==target_w:
+        print("Images already of correct size.")
         return
-    max_h = max(h)
-    max_w = max(w)
+    
     for img_name in img_names:
         im = cv2.imread(os.path.join(basedir, 'images/'+img_name))
-        diff_h = max_h - im.shape[0]
-        diff_w = max_w - im.shape[1]
+        factor_h = round(target_h/double(im.shape[0]), 3)-0.001
+        factor_w = round(target_w/double(im.shape[1]), 3)-0.001
+        final_factor = min(factor_h, factor_w)
+        im = cv2.resize(im.copy(), ( int(floor(im.shape[1]*final_factor)), int(floor(im.shape[0]*final_factor)) ))
+        diff_h = target_h - im.shape[0]
+        diff_w = target_w - im.shape[1]
         im = cv2.copyMakeBorder(im.copy(),int(diff_h/2),int((diff_h+1)/2),int(diff_w/2),int((diff_w+1)/2),cv2.BORDER_CONSTANT)
         cv2.imwrite(os.path.join(basedir, 'images/'+img_name), im)
     return
 
 
-def gen_poses(basedir, match_type, factors=None):
+def gen_poses(basedir, match_type, img_shape, factors=None):
     
     files_needed = ['{}.bin'.format(f) for f in ['cameras', 'images', 'points3D']]
     if os.path.exists(os.path.join(basedir, 'sparse/0')):
@@ -319,7 +326,7 @@ def gen_poses(basedir, match_type, factors=None):
         files_had = []
     if not all([f in files_had for f in files_needed]):
         print( 'Need to run COLMAP' )
-        resize_images(basedir)
+        resize_images(basedir, img_shape)
         run_colmap(basedir, match_type)
     else:
         print('Don\'t need to run COLMAP')
